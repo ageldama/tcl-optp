@@ -36,6 +36,7 @@ namespace eval optp {
             for {set idx 0} {$idx < [llength $argv]} {incr idx} {
                 set curr [lindex $argv $idx]
 
+                set gotmatch false
                 my variable opt_list
                 dict for {oname opt} $opt_list {
                     set alts [dict getdef $opt alts {}]
@@ -43,6 +44,7 @@ namespace eval optp {
 
                     if {[string equal $oname $curr] \
                             || [lsearch -exact $alts $curr] > -1} {
+                        set gotmatch true
                         switch -- $type {
                             "flag" {
                                 dict set parsed $oname 1
@@ -63,6 +65,10 @@ namespace eval optp {
                             }
                         }
                     }
+                }
+
+                if {!$gotmatch} {
+                    error "Option ($curr) cannot be matched!"
                 }
             }
         }
